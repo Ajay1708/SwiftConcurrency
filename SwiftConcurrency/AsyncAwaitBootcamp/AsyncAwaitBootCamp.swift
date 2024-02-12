@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct AsyncAwaitBootCamp: View {
+    @StateObject var vm = AsyncAwaitBootCampViewModel()
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        List(vm.dataArray, id: \.self) { item in
+            Text(item)
+        }
+        .onAppear {
+            vm.addTitle1()
+            vm.addTitle2()
+            Task {
+                await vm.addAuthor1()
+            }
+            let finalText = "FINAL TEXT: \(Thread.current)"
+            vm.dataArray.append(finalText)
+        }
     }
 }
 
