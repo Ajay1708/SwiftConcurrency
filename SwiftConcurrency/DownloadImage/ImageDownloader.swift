@@ -10,7 +10,10 @@ import SwiftUI
 import Combine
 
 class ImageDownloader {
-    let url = URL(string: "https://picsum.photos/200")!
+    let url: URL
+    init(urlString: String = "https://picsum.photos/200") {
+        url = URL(string: urlString)!
+    }
     func downloadWithEscaping(completion: @escaping (_ image: UIImage?, _ err: Error?) -> Void) {
         let request = URLRequest(url: url)
         URLSession.shared.dataTask(with: request) { [weak self]
@@ -28,6 +31,11 @@ class ImageDownloader {
             .eraseToAnyPublisher()
     }
     func downloadWithAsync() async throws -> UIImage? {
+        let (data,resp) = try await URLSession.shared.data(from: url)
+        return handleResponse(data: data, resp: resp)
+    }
+    func downloadWithAsync(from urlString: String) async throws -> UIImage? {
+        guard let url = URL(string: urlString) else { return nil }
         let (data,resp) = try await URLSession.shared.data(from: url)
         return handleResponse(data: data, resp: resp)
     }
